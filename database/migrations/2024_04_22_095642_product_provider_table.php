@@ -13,7 +13,8 @@ return new class extends Migration
     {
         //
         Schema::create('product_provider', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id');
+            $table->primary('id');
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
 

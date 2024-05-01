@@ -13,7 +13,8 @@ return new class extends Migration
     {
         //
         Schema::create('providers', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id');
+            $table->primary('id');
             $table->string('provider_name');
             $table->string('provider_phone')->nullable();
             $table->string('provider_email')->unique();

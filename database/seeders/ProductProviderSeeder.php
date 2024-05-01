@@ -24,7 +24,7 @@ class ProductProviderSeeder extends Seeder
             'GIGABYTE' => ['B760M DS3H DDR4' => 'Placa base', 'RTX 4060' => 'Tarjeta gráfica', 'RTX 3080' => 'Tarjeta gráfica']
         ];
         $providers = ['INTEL', 'AMD', 'MSI', 'ASUS', 'CORSAIR', 'GIGABYTE'];
-
+        $count = 1;
         foreach($data as $key => $value){
             foreach($value as $element => $type){
 
@@ -34,7 +34,8 @@ class ProductProviderSeeder extends Seeder
                 $price = fake()->randomFloat(2, 200, 1000);
                 $stock = fake()->numberBetween(1, 1000);
 
-                $product->providers()->attach($provider->id, ['product_price' => $price, 'product_stock' => $stock]);
+                $product->providers()->attach($provider->id, ['product_price' => $price, 'product_stock' => $stock, 'id' => $count]);
+                $count++;
             }
 
 

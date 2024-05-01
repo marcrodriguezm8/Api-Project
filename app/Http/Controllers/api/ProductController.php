@@ -39,7 +39,10 @@ class ProductController extends Controller
         $now = new \DateTime();
         $code = $now->format('YdmHis').$lastCode;
 
+        $maxId = Product::max('id');
+
         $productData = [
+            'id' => $maxId + 1,
             "product_name" => $request->product_name,
             "product_category" => $request->product_category,
             "product_code" => $code,
@@ -68,7 +71,11 @@ class ProductController extends Controller
     //curl -X DELETE http://localhost:8000/api/products/21
     function destroy($id){
         $deleted = Product::where('id', $id)->delete();
+        $productToUpdate = Product::where('id', '>', $id)->get();
 
+        foreach($productToUpdate as $product){
+            $product->update(['id' => $product->id - 1]);
+        }
         if($deleted) {
             return response()->json(['data' => 'Producto eliminado con éxito'], 200, [], JSON_UNESCAPED_UNICODE);
         } else {

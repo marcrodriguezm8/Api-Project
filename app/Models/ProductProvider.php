@@ -11,6 +11,7 @@ class ProductProvider extends Model
     protected $table = 'product_provider';
 
     protected $fillable = [
+        'id',
         'product_id',
         'provider_id',
         'product_price',

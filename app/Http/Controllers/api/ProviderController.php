@@ -34,13 +34,14 @@ class ProviderController extends Controller
             'provider_email' => 'required|string',
             'provider_location' => 'required|string',
         ]);
-
+        $maxId = Provider::max('id');
+        $provider['id'] = $maxId + 1;
         try{
             Provider::create($provider);
             return response()->json(['data' => 'Proveedor insertado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
         }
         catch(\Exception $e){
-            return response()->json(['data' => 'Error al insertar el proveedor'], 404, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['data' => 'Error al insertar el proveedor '.$e->getMessage()], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
     function update(Request $request, $id){
@@ -58,7 +59,11 @@ class ProviderController extends Controller
     //curl -X DELETE http://localhost:8000/api/products/21
     function destroy($id){
         $deleted = Provider::where('id', $id)->delete();
+        $providersToUpdate = Provider::where('id', '>', $id)->get();
 
+        foreach($providersToUpdate as $provider){
+            $provider->update(['id' => $provider->id - 1]);
+        }
         if($deleted) {
             return response()->json(['data' => 'Proveedor eliminado con éxito'], 200, [], JSON_UNESCAPED_UNICODE);
         } else {

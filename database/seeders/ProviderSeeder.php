@@ -15,15 +15,16 @@ class ProviderSeeder extends Seeder
     {
         //
         $brands = ['INTEL', 'AMD', 'MSI', 'ASUS', 'CORSAIR', 'GIGABYTE'];
-
+        $count = 1;
         foreach($brands as $brand){
             $providerData = [
+                'id' => $count,
                 'provider_name' => $brand,
                 'provider_email' => fake()->unique()->safeEmail(),
                 'provider_location' => fake()->countryCode(),
             ];
             if(fake()->boolean()) $providerData['provider_phone'] = fake()->phoneNumber();
-
+            $count++;
             Provider::create($providerData);
         }
     }

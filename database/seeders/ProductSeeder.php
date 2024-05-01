@@ -33,14 +33,16 @@ class ProductSeeder extends Seeder
 
                 $productCode = $date.$code;
 
-                $code++;
+
 
                 $productData = [
+                    'id' => $code,
                     'product_name' => $element,
                     'product_code' => $productCode,
                     'product_category' => $key,
 
                 ];
+                $code++;
                 Product::create($productData);
             }
         }
