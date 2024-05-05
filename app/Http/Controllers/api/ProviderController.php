@@ -30,7 +30,7 @@ class ProviderController extends Controller
     function store(Request $request){
         $provider = $request->validate([
             'provider_name' => 'required|string',
-            'provider_phone' => 'string',
+            'provider_phone' => 'nullable|string',
             'provider_email' => 'required|string',
             'provider_location' => 'required|string',
         ]);

@@ -13,8 +13,10 @@ class ProductProviderController extends Controller
     function index(){
         $products_prov = ProductProvider::join('products', 'products.id', '=', 'product_provider.product_id')
         ->join('providers', 'providers.id', '=', 'product_provider.provider_id')
-        ->select('product_provider.*', 'products.*', 'providers.*')
+        ->select('product_provider.id as product_provider_id', 'product_provider.product_id', 'product_provider.provider_id', 'product_provider.product_price',
+        'product_provider.product_stock', 'products.*', 'providers.*')
         ->get();
+
 
         if($products_prov->isNotEmpty()){
             return response()->json(['data' => $products_prov], 200, [], JSON_UNESCAPED_UNICODE);
@@ -71,14 +73,14 @@ class ProductProviderController extends Controller
     function destroy($id){
         $deleted = ProductProvider::where('id', $id)->delete();
         $product_provToUpdate = ProductProvider::where('id', '>', $id)->get();
-
+        $p = ProductProvider::where('id', $id);
         foreach($product_provToUpdate as $product_prov){
             $product_prov->update(['id' => $product_prov->id - 1]);
         }
         if($deleted) {
             return response()->json(['data' => 'Producto eliminado con éxito'], 200, [], JSON_UNESCAPED_UNICODE);
         } else {
-            return response()->json(['data' => 'Error al eliminar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['data' => 'Error al eliminar el producto', 'p' => $p], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
 }
