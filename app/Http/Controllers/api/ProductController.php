@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
@@ -14,7 +15,7 @@ class ProductController extends Controller
         if($products->isNotEmpty()){
             return response()->json(['data' => $products], 200, [], JSON_UNESCAPED_UNICODE);
         } else {
-            return response()->json(['data' => 'No products'], 404, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['data' => 'No existen productos'], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
 
@@ -23,7 +24,7 @@ class ProductController extends Controller
         if($product){
             return response()->json(['data' => $product], 200, [], JSON_UNESCAPED_UNICODE);
         } else {
-            return response()->json(['data' => 'Product no exists'], 404, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['data' => 'Producto no existe'], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
     //curl -X POST -H "Content-Type: application/json" -d '{"product_name":"RTX 4080", "product_code":"admin", "product_category": "Tarjeta gráfica"}' http://localhost:8000/api/products/store
@@ -53,6 +54,7 @@ class ProductController extends Controller
             return response()->json(['data' => 'Producto insertado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
         }
         catch(\Exception $e){
+            if($e->getCode() == 23000) return response()->json(['data' => 'Producto ya existe'], 404, [], JSON_UNESCAPED_UNICODE);
             return response()->json(['data' => 'Error al insertar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
@@ -60,26 +62,33 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if($product){
-            $product->update($request->all());
-          return response()->json(['data' => 'Producto actualizado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
-        }
-          else {
-            return response()->json(['data' => 'Error al actualizar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
+            try{
+                $product->update($request->all());
+                return response()->json(['data' => 'Producto actualizado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
+            }
+            catch(\Exception $e){
+                if($e->getCode() == 23000) return response()->json(['data' => 'Error al actualizar el producto, el nombre ya existe'], 404, [], JSON_UNESCAPED_UNICODE);
+                return response()->json(['data' => 'Error al actualizar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
+            }
+
         }
 
     }
-    //curl -X DELETE http://localhost:8000/api/products/21
-    function destroy($id){
-        $deleted = Product::where('id', $id)->delete();
-        $productToUpdate = Product::where('id', '>', $id)->get();
 
-        foreach($productToUpdate as $product){
-            $product->update(['id' => $product->id - 1]);
+    function destroy($id){
+        try{
+            $deleted = Product::where('id', $id)->delete();
+            Product::where('id', '>', $id)->update(['id' => DB::raw('id - 1')]);;
+
+            if($deleted) {
+                return response()->json(['data' => 'Producto eliminado con éxito'], 200, [], JSON_UNESCAPED_UNICODE);
+            } else {
+                return response()->json(['data' => 'Error al eliminar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
+            }
         }
-        if($deleted) {
-            return response()->json(['data' => 'Producto eliminado con éxito'], 200, [], JSON_UNESCAPED_UNICODE);
-        } else {
+        catch(\Exception $e){
             return response()->json(['data' => 'Error al eliminar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
         }
+
     }
 }
