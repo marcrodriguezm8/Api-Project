@@ -20,7 +20,7 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             $token = $user->createToken('api-project')->plainTextToken;
 
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token, 'credentials' => $credentials], 200);
         }
         else {
             return response()->json(['Invalid credentials'], 401);

@@ -55,15 +55,16 @@ class ProductProviderController extends Controller
             $maxIdProduct = Product::max('id');
             $maxIdProvider = Provider::max('id');
 
-            if($request->product_id > $maxIdProduct) throw new \Exception('El id del producto no existe');
-            else if($request->provider_id > $maxIdProvider) throw new \Exception('El id del proveedor no existe');
+            if($request->product_id > $maxIdProduct) throw new \Exception(': El id del producto no existe', 404);
+            else if($request->provider_id > $maxIdProvider) throw new \Exception(': El id del proveedor no existe', 404);
             else $product_prov['id'] = $maxId + 1;
 
             ProductProvider::create($product_prov);
             return response()->json(['data' => 'Producto insertado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
         }
         catch(\Exception $e){
-            return response()->json(['data' => 'Error al insertar el producto '.$e->getMessage()], 404, [], JSON_UNESCAPED_UNICODE);
+            if($e->getCode() == 404) return response()->json(['data' => 'Error al insertar el producto '.$e->getMessage()], 404, [], JSON_UNESCAPED_UNICODE);
+            return response()->json(['data' => 'Error al insertar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
         }
     }
     function update(Request $request, $id){
@@ -74,13 +75,14 @@ class ProductProviderController extends Controller
                 $maxIdProduct = Product::max('id');
                 $maxIdProvider = Provider::max('id');
 
-                if($request->product_id > $maxIdProduct) throw new \Exception('El id del producto no existe');
-                else if($request->provider_id > $maxIdProvider) throw new \Exception('El id del proveedor no existe');
+                if($request->product_id > $maxIdProduct) throw new \Exception(': El id del producto no existe', 404);
+                else if($request->provider_id > $maxIdProvider) throw new \Exception(': El id del proveedor no existe', 404);
 
                 $product_prov->update($request->all());
                 return response()->json(['data' => 'Producto actualizado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
             }
             catch(\Exception $e){
+                if($e->getCode() == 404) return response()->json(['data' => 'Error al actualizar el producto '.$e->getMessage()], 404, [], JSON_UNESCAPED_UNICODE);
                 return response()->json(['data' => 'Error al actualizar el producto'], 404, [], JSON_UNESCAPED_UNICODE);
             }
         }
