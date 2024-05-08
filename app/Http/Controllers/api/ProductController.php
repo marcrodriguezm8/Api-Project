@@ -34,12 +34,20 @@ class ProductController extends Controller
             'product_category' => 'required|string',
         ]);
         $lastCode = Product::all()->last();
-        $lastCode = (int)substr($lastCode->product_code, 14);
-        $lastCode++;
+        if($lastCode){
+            $lastCode = (int)substr($lastCode->product_code, 14);
+            $lastCode++;
 
-        $now = new \DateTime();
-        $code = $now->format('YdmHis').$lastCode;
+            $now = new \DateTime();
+            $code = $now->format('YdmHis').$lastCode;
 
+
+        }
+        else {
+            $lastCode = 1;
+            $now = new \DateTime();
+            $code = $now->format('YdmHis').$lastCode;
+        }
         $maxId = Product::max('id');
 
         $productData = [

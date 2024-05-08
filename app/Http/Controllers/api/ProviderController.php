@@ -56,6 +56,7 @@ class ProviderController extends Controller
                 return response()->json(['data' => 'Proveedor actualizado correctamente'], 200, [], JSON_UNESCAPED_UNICODE);
             }
             catch(\Exception $e){
+                if($e->getCode() == 23000) return response()->json(['data' => 'El nombre o el email ya existen'], 404, [], JSON_UNESCAPED_UNICODE);
                 return response()->json(['data' => 'Error al actualizar el proveedor'], 404, [], JSON_UNESCAPED_UNICODE);
             }
 
