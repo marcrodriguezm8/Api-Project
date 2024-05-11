@@ -23,7 +23,7 @@ class AuthController extends Controller
             return response()->json(['token' => $token, 'credentials' => $credentials], 200);
         }
         else {
-            return response()->json(['Invalid credentials'], 401);
+            return response()->json(['Email o contraseña incorrectos'], 401);
         }
     }
 
