@@ -28,10 +28,11 @@ class ProductProviderController extends Controller
     }
 
     function show($id){
-        $product_prov = ProductProvider::where('product_id', $id)
+        $product_prov = ProductProvider::where('product_provider.id', $id)
             ->join('products', 'products.id', '=', 'product_provider.product_id')
             ->join('providers', 'providers.id', '=', 'product_provider.provider_id')
-            ->select('product_provider.*', 'products.*', 'providers.*')
+            ->select('product_provider.id as product_provider_id', 'product_provider.product_id', 'product_provider.provider_id', 'product_provider.product_price',
+            'product_provider.product_stock', 'products.*', 'providers.*')
             ->get();
 
 
