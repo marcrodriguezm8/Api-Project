@@ -17,6 +17,7 @@ class ProductProviderController extends Controller
             ->join('providers', 'providers.id', '=', 'product_provider.provider_id')
             ->select('product_provider.id as product_provider_id', 'product_provider.product_id', 'product_provider.provider_id', 'product_provider.product_price',
             'product_provider.product_stock', 'products.*', 'providers.*')
+            ->orderBy('product_provider_id')
             ->get();
 
 
